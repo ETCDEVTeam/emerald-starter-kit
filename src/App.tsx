@@ -5,6 +5,7 @@ var contractJson = require("../build/contracts/MetaCoin.json");
 import * as Contract from "truffle-contract";
 import EmeraldWeb3Provider from "../emerald-web3-provider";
 import IMetaCoin from "./contract-interfaces/IMetaCoin";
+import Page from "emerald-js-ui/lib/components/Page";
 
 interface IAppState {
   emerald: EthRpc;
@@ -50,11 +51,11 @@ class App extends React.Component<{}, IAppState> {
 
   public render() {
     return (
-      <div>
+      <Page title="Emerald Starter Kit">
         <button onClick={this.getInfo}>Get Info</button>
         {this.state.netVersion}
         {this.state.balance && this.state.balance.toString()}
-      </div>
+      </Page>
     );
   }
 }
