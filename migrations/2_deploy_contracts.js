@@ -1,5 +1,5 @@
-const MetaCoin = artifacts.require("./MetaCoin.sol");
+const Todos = artifacts.require("./Todos.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(MetaCoin);
+  deployer.deploy(Todos);
 };
