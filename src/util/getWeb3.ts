@@ -1,4 +1,12 @@
 import * as Web3 from "web3";
+import * as RpcEngine from 'json-rpc-engine';
+import * as createScaffoldMiddleware from 'json-rpc-engine/src/createScaffoldMiddleware';
+import * as createAsyncMiddleware from 'json-rpc-engine/src/createAsyncMiddleware';
+import * as asMiddleware from 'json-rpc-engine/src/asMiddleware';
+
+interface P extends Web3.Provider {
+  rpcEngine?: object;
+}
 
 let p: Promise<Web3>;
 
@@ -8,11 +16,31 @@ const getWeb3 = (): Promise<Web3> => {
       // Wait for loading completion to avoid race conditions with web3 injection timing.
       window.addEventListener("load", () => {
         let web3: Web3 = (window as any).web3 as Web3;
+        let engine = new RpcEngine();
+        engine.push(createScaffoldMiddleware({
+          'eth_accounts': createAsyncMiddleware((req, res, next, end) => {
+            alert('eth_accounts');
+          }),
+          'eth_sign': createAsyncMiddleware((req, res, next, end) => {
+            alert('eth_accounts');
+          }),
+          'personal_sign': createAsyncMiddleware((req, res, next, end) => {
+            alert('eth_accounts');
+          }),
+        }));
+
 
         // Checking if Web3 has been injected by the browser (Mist/MetaMask)
         if (typeof web3 !== "undefined") {
           console.log("Using injected web3 provider");
-          web3 = new Web3(web3.currentProvider);
+          let newProvider: P = web3.currentProvider;
+          engine.push(asMiddleware(newProvider.rpcEngine))
+          web3 = new Web3({
+            sendAsync: (request, cb) => {
+              debugger
+              engine.handle(request, cb);
+            }
+          });
         } else {
           // Fallback to localhost if no web3 injection.
           console.log("No web3 instance injected, using Local web3.");

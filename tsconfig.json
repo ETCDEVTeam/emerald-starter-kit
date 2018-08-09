@@ -11,7 +11,7 @@
       "scripthost"
     ],
     "sourceMap": true,
-    "alwaysStrict": true,
+    "alwaysStrict": false,
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false

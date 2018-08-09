@@ -2,9 +2,11 @@ pragma solidity ^0.4.2;
 
 contract Todos {
     bytes32[] todos;
+    event AfterAddTodo(bytes32 todo);
 
     function addTodo(bytes32 todo) public {
         todos.push(todo);
+        emit AfterAddTodo(todo);
     }
 
     function getTodos() constant public returns (bytes32[]) {

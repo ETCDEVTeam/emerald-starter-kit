@@ -56,8 +56,9 @@
   "dependencies": {
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
-    "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#material-ui-one",
+    "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#material-paper-list",
     "ethereumjs-util": "^5.1.2",
+    "json-rpc-engine": "^3.7.3",
     "raf": "^3.4.0",
     "react": "^16.1.0",
     "react-dom": "^16.1.0",
