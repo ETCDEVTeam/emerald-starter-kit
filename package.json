@@ -20,7 +20,7 @@
     "url": "https://github.com/libertylocked/truffle-react-ts-template.git"
   },
   "scripts": {
-    "start": "npm run-script dev",
+    "start": "truffle compile && npm run-script dev",
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "jest --verbose --coverage",
@@ -54,6 +54,7 @@
     }
   },
   "dependencies": {
+    "@material-ui/core": "^1.4.3",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
     "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#material-ui-one",
@@ -89,7 +90,7 @@
     "tslint": "^5.8.0",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.6.1",
+    "typescript": "^3.0.1",
     "web3-typescript-typings": "^0.7.2",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
