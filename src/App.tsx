@@ -48,6 +48,7 @@ class App extends React.Component<{}, IAppState> {
 
   public async componentWillMount() {
     const web3 = await getWeb3();
+    debugger;
     TodosContract.setProvider(web3.currentProvider);
     this.setState({
       truffleContract: await TodosContract.deployed(),
@@ -93,6 +94,7 @@ class App extends React.Component<{}, IAppState> {
 
   public addTodo() {
     return this.state.web3.eth.getAccounts((err, accounts) => {
+      debugger;
       return this.state.truffleContract.addTodo(this.state.web3.fromAscii(this.state.textarea), {
         from: accounts[0],
       }).then(this.getTodoFromEventLog)

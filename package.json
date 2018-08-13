@@ -1,7 +1,7 @@
 {
-  "name": "truffle-react-ts-template",
+  "name": "emerald-starter-kit",
   "version": "1.0.0",
-  "description": "React DApp TS Template",
+  "description": "Emerald starter kit",
   "keywords": [
     "typescript",
     "react",
@@ -10,17 +10,12 @@
   "bugs": {
     "url": "https://github.com/LibertyLocked/truffle-react-ts-template/issues"
   },
-  "author": "libertylocked",
-  "contributors": [
-    "libertylocked"
-  ],
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/libertylocked/truffle-react-ts-template.git"
   },
   "scripts": {
-    "start": "truffle compile && npm run-script dev",
+    "start": "npm run-script dev",
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "jest --verbose --coverage",
@@ -58,7 +53,7 @@
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
     "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#material-ui-one",
-    "ethereumjs-util": "^5.1.2",
+    "ethereumjs-util": "^5.2.0",
     "json-rpc-engine": "^3.7.3",
     "raf": "^3.4.0",
     "react": "^16.4.2",
