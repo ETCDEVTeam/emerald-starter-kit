@@ -57,7 +57,8 @@ contract Todos {
 
     modifier indexInBounds(uint256 index) {
         require(
-            index < todos.length
+            index < todos.length,
+            "Index not in bounds."
         );
         _;
     }
