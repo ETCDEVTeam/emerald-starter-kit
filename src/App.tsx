@@ -104,7 +104,7 @@ class App extends React.Component<{}, IAppState> {
         <Page title="Emerald Starter Kit">
           <div>
             <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
-            <TransactionButton onClick={() => {this.setState({textarea: ''})}} transaction={this.state.transaction} />
+            <TransactionButton transaction={this.state.transaction} />
           </div>
           <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodos" refresh={3000}>
             {(results) => this.renderTodos(results[0].value)}
