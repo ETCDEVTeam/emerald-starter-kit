@@ -1,7 +1,7 @@
 {
-  "name": "truffle-react-ts-template",
+  "name": "emerald-starter-kit",
   "version": "1.0.0",
-  "description": "React DApp TS Template",
+  "description": "Emerald starter kit",
   "keywords": [
     "typescript",
     "react",
@@ -10,11 +10,6 @@
   "bugs": {
     "url": "https://github.com/LibertyLocked/truffle-react-ts-template/issues"
   },
-  "author": "libertylocked",
-  "contributors": [
-    "libertylocked"
-  ],
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/libertylocked/truffle-react-ts-template.git"
@@ -54,15 +49,16 @@
     }
   },
   "dependencies": {
+    "@material-ui/core": "^1.4.3",
     "bignumber.js": "^4.1.0",
     "bluebird": "^3.5.1",
-    "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#material-ui-one",
-    "ethereumjs-util": "^5.1.2",
+    "emerald-js-ui": "git+https://github.com/ETCDEVTeam/emerald-js-ui.git#feature/smart-contract",
+    "ethereumjs-util": "^5.2.0",
+    "json-rpc-engine": "^3.7.3",
+    "qs": "^6.5.2",
     "raf": "^3.4.0",
-    "react": "^16.1.0",
-    "react-dom": "^16.1.0",
-    "truffle-contract": "^3.0.1",
-    "web3": "^0.20.2"
+    "react": "^16.4.2",
+    "react-dom": "^16.1.0"
   },
   "devDependencies": {
     "@types/bignumber.js": "^4.0.3",
@@ -88,7 +84,7 @@
     "tslint": "^5.8.0",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.2.0",
-    "typescript": "^2.6.1",
+    "typescript": "^3.0.1",
     "web3-typescript-typings": "^0.7.2",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"

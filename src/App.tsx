@@ -1,20 +1,26 @@
-import * as React from "react";
-var contractJson = require("../build/contracts/Todos.json");
-import * as Web3 from "web3";
-import * as Contract from "truffle-contract";
-import ITodos from "./contract-interfaces/ITodos";
+import Input from "emerald-js-ui/lib/components/Input";
 import Page from "emerald-js-ui/lib/components/Page";
-import getWeb3 from "./util/getWeb3";
+import * as React from "react";
+
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import { TransactionButton } from 'emerald-js-ui';
+
+import Paper from "@material-ui/core/Paper";
+import { Contract, EmeraldProvider, AppBar, EtcBalance, NetworkSelector, AccountSelector, CurrentBlockNumber } from 'emerald-js-ui';
+
+const contractJson = require("../build/contracts/Todos.json");
 
 interface IAppState {
-  netVersion: string;
   todos: string[];
   textarea: string;
-  truffleContract: ITodos;
-  web3: Web3;
+  contractAddress: string;
+  contractAbi: any[];
+  transaction: any;
+  account: string;
+  changeAccount: (string) => any;
 }
-
-const TodosContract: Contract = Contract(contractJson);
 
 class App extends React.Component<{}, IAppState> {
   public state: IAppState;
@@ -22,65 +28,89 @@ class App extends React.Component<{}, IAppState> {
   constructor(props) {
     super(props);
     this.state = {
-      netVersion: null,
-      todos: null,
-      web3: null,
+      todos: [],
       textarea: null,
-      truffleContract: null,
-    }
-    this.refreshTodos = this.refreshTodos.bind(this);
-    this.addTodo = this.addTodo.bind(this);
+      transaction: {},
+      account: null,
+      contractAddress: contractJson.networks[61].address,
+      contractAbi: contractJson.abi,
+      changeAccount: account => {
+        this.setState({
+          ...this.state,
+          account,
+          transaction: {
+            ...this.state.transaction,
+            from: account,
+          }
+        });
+      }
+    };
   }
 
   public async componentWillMount() {
-    const web3 = await getWeb3();
-    TodosContract.setProvider(web3.currentProvider);
     this.setState({
-      truffleContract: await TodosContract.deployed(),
-      web3
-    });
-    this.refreshTodos();
-  }
-
-  async refreshTodos() {
-    const todos = await this.state.truffleContract.getTodos();
-    this.setState({
-      todos: todos.map((todo) => this.state.web3.toAscii(todo))
+      ...this.state,
+      transaction: {
+        gas: 420000,
+        from: this.state.account,
+        to: this.state.contractAddress,
+      }
     });
   }
 
-  renderTodos(todos) {
-    return todos.map((todo, i) => {
-      return (
-          <li key={i}>{todo}</li>
-      );
-    })
+  public renderTodos(todos) {
+    return (
+      <List component="nav">
+        {todos.map((todo, i) => {
+          return (
+            <Paper>
+              <ListItem key={i}>
+                <ListItemText primary={new Buffer(todo, 'hex').toString()} />
+              </ListItem>
+            </Paper>
+          );
+        })}
+      </List>
+    );
   }
 
-  addTodo() {
-    return this.state.web3.eth.getAccounts((err, accounts) => {
-      return this.state.truffleContract.addTodo(this.state.web3.fromAscii(this.state.textarea), {
-        from: accounts[0]
-      }).then(this.refreshTodos);
-    });
-  }
-
-  handleTextAreaChange(event) {
+  public handleTextAreaChange(event) {
     this.setState({
-      textarea: event.target.value
+      textarea: event.target.value,
+      transaction: {
+        ...this.state.transaction,
+        mode: "contract_function",
+        functionSignature: this.state.contractAbi.find((item) => item.name === 'addTodo'),
+        argsDefaults: [
+          {
+            name: "todo",
+            value: event.target.value
+          },
+        ]
+      }
     });
   }
 
   public render() {
     return (
-      <Page title="Emerald Starter Kit">
+      <EmeraldProvider ethUrl="http://localhost:8545">
+        <AppBar title="Emerald" subtitle="Starter Kit">
+          <NetworkSelector />
+          <CurrentBlockNumber />
+          <AccountSelector account={this.state.account} onChange={this.state.changeAccount}/>
+          <EtcBalance account={this.state.account}/>
+        </AppBar>
         <br />
-        {this.state.todos && this.renderTodos(this.state.todos)}
-        <br />
-        <textarea id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)} />
-        <button onClick={this.addTodo.bind(this)}>Add Todo</button>
-
-      </Page>
+        <Page title="Emerald Starter Kit">
+          <div>
+            <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
+            <TransactionButton transaction={this.state.transaction} />
+          </div>
+          <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodos" refresh={3000}>
+            {(results) => this.renderTodos(results[0].value)}
+          </Contract>
+        </Page>
+      </EmeraldProvider>
     );
   }
 }
