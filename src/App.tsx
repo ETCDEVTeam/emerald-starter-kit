@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon} from "@material-ui/core";
-import { Page, Input, TransactionButton, Contract, EmeraldProvider, AppBar, EtcBalance, NetworkSelector, AccountSelector, CurrentBlockNumber } from 'emerald-js-ui';
+import { Button, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon} from "@material-ui/core";
+import { TransactionUri, Page, Input, Contract, EmeraldProvider, AppBar, EtcBalance, NetworkSelector, AccountSelector, CurrentBlockNumber } from 'emerald-js-ui';
 
 const contractJson = require("../build/contracts/Todos.json");
 
@@ -25,7 +25,7 @@ class App extends React.Component<{}, IAppState> {
       textarea: null,
       transaction: {},
       account: null,
-      contractAddress: contractJson.networks[61].address,
+      contractAddress: contractJson.networks[1].address,
       contractAbi: contractJson.abi,
       changeAccount: account => {
         this.setState({
@@ -54,33 +54,24 @@ class App extends React.Component<{}, IAppState> {
   public renderTodos(todoIds) {
     return (
       <List component="nav">
-      {todoIds.map((todoId) => {
-        return (
-          <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodo" params={{index: todoId.toNumber()}}>
-          {([text, complete, deleted]) => (
-            <Paper>
-              <ListItem key={todoId.toNumber()}>
-                <ListItemIcon>
-                  <Checkbox checked={complete.value}/>
-                </ListItemIcon>
-                <ListItemText primary={new Buffer(text.value, 'hex').toString()} />
-                <TransactionButton transaction={{
-                  ...this.state.transaction,
-                  mode: "contract_function",
-                  functionSignature: this.state.contractAbi.find((item) => item.name === 'toggleTodoAtIndex'),
-                  argsDefaults: [
-                    {
-                      name: "index",
-                      value: todoId.toNumber()
-                    },
-                  ]
-                }} />
-              </ListItem>
-            </Paper>
-          )}
-          </Contract>
-        );
-      })}
+        {todoIds.map((todoId) => {
+           return (
+             <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodo" params={{index: todoId.toNumber()}}>
+               {([text, complete, deleted]) => (
+                 <Paper>
+                   <ListItem key={todoId.toNumber()}>
+                     <ListItemIcon>
+                       <TransactionUri abi={this.state.contractAbi} to={this.state.transaction.to} from={this.state.transaction.from} gas={this.state.transaction.gas} method="toggleTodoAtIndex" params={[{name: 'index', value: todoId.toNumber()}]}>
+                         {transactionUri => <Checkbox checked={complete.value} onClick={() => window.location.href = transactionUri}/>}
+                       </TransactionUri>
+                     </ListItemIcon>
+                     <ListItemText primary={new Buffer(text.value, 'hex').toString()} />
+                   </ListItem>
+                 </Paper>
+               )}
+             </Contract>
+           );
+        })}
       </List>
     );
   }
@@ -90,13 +81,12 @@ class App extends React.Component<{}, IAppState> {
       textarea: event.target.value,
       transaction: {
         ...this.state.transaction,
-        mode: "contract_function",
-        functionSignature: this.state.contractAbi.find((item) => item.name === 'addTodo'),
-        argsDefaults: [
+        method: 'addTodo',
+        params: [
           {
-            name: "todoText",
+            name: 'todoText',
             value: event.target.value
-          },
+          }
         ]
       }
     });
@@ -115,7 +105,9 @@ class App extends React.Component<{}, IAppState> {
         <Page title="Emerald Starter Kit">
           <div>
             <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
-            <TransactionButton transaction={this.state.transaction} />
+            <TransactionUri abi={this.state.contractAbi} {...this.state.transaction}>
+              {(transactionUri) => <Button variant="contained" href={transactionUri}>Send Transaction</Button>}
+            </TransactionUri>
           </div>
           <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodoIds" refresh={3000}>
             {([{value}]) => this.renderTodos(value)}
@@ -125,5 +117,6 @@ class App extends React.Component<{}, IAppState> {
     );
   }
 }
+
 
 export default App;
