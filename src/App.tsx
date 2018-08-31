@@ -144,10 +144,7 @@ class App extends React.Component<{}, IAppState> {
           <div>
             <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
             <TransactionUri abi={this.state.contractAbi} {...this.state.transaction} value={'1000000000000000000'}>
-              {(transactionUri) => {
-                 console.log(transactionUri);
-                 return (<Button variant="contained" href={transactionUri}>Send Transaction</Button>)
-              }}
+              {(transactionUri) => (<Button variant="contained" href={transactionUri}>Send Transaction</Button>)}
             </TransactionUri>
           </div>
           <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodoIds" refresh={3000}>
