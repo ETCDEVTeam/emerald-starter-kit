@@ -1,7 +1,8 @@
 import * as React from "react";
 
-import { Button, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon} from "@material-ui/core";
+import { IconButton, Button, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon} from "@material-ui/core";
 import { TransactionUri, Page, Input, Contract, EmeraldProvider, AppBar, EtcBalance, NetworkSelector, AccountSelector, CurrentBlockNumber } from 'emerald-js-ui';
+import { Close } from 'emerald-js-ui/lib/icons3';
 
 const contractJson = require("../build/contracts/Todos.json");
 
@@ -51,6 +52,42 @@ class App extends React.Component<{}, IAppState> {
     });
   }
 
+  private renderToggleCheckbox(abi, { to, from, gas }, todoId, complete) {
+    return (
+      <TransactionUri
+        abi={abi}
+        to={to}
+        from={from}
+        gas={gas}
+        method="toggleTodoAtIndex"
+        params={[{name: 'index', value: todoId.toNumber()}]}
+      >
+        {transactionUri =>
+          <Checkbox checked={complete.value} onClick={() => window.location.href = transactionUri}/>
+        }
+      </TransactionUri>
+    );
+  }
+
+  private renderDeleteButton(abi, { to, from, gas }, todoId) {
+    return (
+      <TransactionUri
+        abi={abi}
+        to={to}
+        from={from}
+        gas={gas}
+        method="deleteTodo"
+        params={[{name: 'index', value: todoId.toNumber()}]}
+      >
+        {transactionUri =>
+          <IconButton onClick={() => window.location.href = transactionUri}>
+            <Close />
+          </IconButton>
+        }
+      </TransactionUri>
+    );
+  }
+
   public renderTodos(todoIds) {
     return (
       <List component="nav">
@@ -61,9 +98,10 @@ class App extends React.Component<{}, IAppState> {
                  <Paper>
                    <ListItem key={todoId.toNumber()}>
                      <ListItemIcon>
-                       <TransactionUri abi={this.state.contractAbi} to={this.state.transaction.to} from={this.state.transaction.from} gas={this.state.transaction.gas} method="toggleTodoAtIndex" params={[{name: 'index', value: todoId.toNumber()}]}>
-                         {transactionUri => <Checkbox checked={complete.value} onClick={() => window.location.href = transactionUri}/>}
-                       </TransactionUri>
+                       <div>
+                         {this.renderToggleCheckbox(this.state.contractAbi, this.state.transaction, todoId, complete)}
+                         {this.renderDeleteButton(this.state.contractAbi, this.state.transaction, todoId)}
+                       </div>
                      </ListItemIcon>
                      <ListItemText primary={new Buffer(text.value, 'hex').toString()} />
                    </ListItem>
@@ -105,8 +143,11 @@ class App extends React.Component<{}, IAppState> {
         <Page title="Emerald Starter Kit">
           <div>
             <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
-            <TransactionUri abi={this.state.contractAbi} {...this.state.transaction}>
-              {(transactionUri) => <Button variant="contained" href={transactionUri}>Send Transaction</Button>}
+            <TransactionUri abi={this.state.contractAbi} {...this.state.transaction} value={'1000000000000000000'}>
+              {(transactionUri) => {
+                 console.log(transactionUri);
+                 return (<Button variant="contained" href={transactionUri}>Send Transaction</Button>)
+              }}
             </TransactionUri>
           </div>
           <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodoIds" refresh={3000}>
