@@ -1,4 +1,4 @@
 export default interface ITodos {
-  addTodo(todo: string, params: any): Promise<string[]>;
+  addTodo(todo: string): Promise<string[]>;
   getTodos(): Promise<string[]>;
 }
