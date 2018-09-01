@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IconButton, Button, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon} from "@material-ui/core";
+import { Typography, Grid, IconButton, Button, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon } from "@material-ui/core";
 import { TransactionUri, Page, Input, Contract, EmeraldProvider, AppBar, EtcBalance, NetworkSelector, AccountSelector, CurrentBlockNumber } from 'emerald-js-ui';
 import { Close } from 'emerald-js-ui/lib/icons3';
 
@@ -52,7 +52,7 @@ class App extends React.Component<{}, IAppState> {
     });
   }
 
-  private renderToggleCheckbox(abi, { to, from, gas }, todoId, complete) {
+  private renderToggleCheckbox(abi, { to, from, gas }, todoId, complete, color) {
     return (
       <TransactionUri
         abi={abi}
@@ -63,7 +63,7 @@ class App extends React.Component<{}, IAppState> {
         params={[{name: 'index', value: todoId.toNumber()}]}
       >
         {transactionUri =>
-          <Checkbox checked={complete.value} onClick={() => window.location.href = transactionUri}/>
+          <Checkbox checked={complete.value} onClick={() => window.location.href = transactionUri} color={color} />
         }
       </TransactionUri>
     );
@@ -90,27 +90,35 @@ class App extends React.Component<{}, IAppState> {
 
   public renderTodos(todoIds) {
     return (
-      <List component="nav">
-        {todoIds.map((todoId) => {
-           return (
-             <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodo" params={{index: todoId.toNumber()}}>
-               {([text, complete, deleted]) => (
-                 <Paper>
-                   <ListItem key={todoId.toNumber()}>
-                     <ListItemIcon>
-                       <div>
-                         {this.renderToggleCheckbox(this.state.contractAbi, this.state.transaction, todoId, complete)}
-                         {this.renderDeleteButton(this.state.contractAbi, this.state.transaction, todoId)}
-                       </div>
-                     </ListItemIcon>
-                     <ListItemText primary={new Buffer(text.value, 'hex').toString()} />
-                   </ListItem>
-                 </Paper>
-               )}
-             </Contract>
-           );
-        })}
-      </List>
+      <React.Fragment>
+        <Typography variant="title" color="inherit">{todoIds.length} Tasks found on chain</Typography>
+        <br />
+        <br />
+        <List component="nav">
+          {todoIds.map((todoId) => {
+             return (
+               <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodo" params={{index: todoId.toNumber()}}>
+                 {([text, complete, deleted]) => {
+                    const color = complete.value ? "primary" : "textSecondary";
+                    return (
+                      <Paper>
+                        <ListItem key={todoId.toNumber()}>
+                          <ListItemIcon>
+                            {this.renderToggleCheckbox(this.state.contractAbi, this.state.transaction, todoId, complete, color)}
+                          </ListItemIcon>
+                          <ListItemText primary={new Buffer(text.value, 'hex').toString()} primaryTypographyProps={{color}}/>
+                          <ListItemIcon>
+                            {this.renderDeleteButton(this.state.contractAbi, this.state.transaction, todoId)}
+                          </ListItemIcon>
+                        </ListItem>
+                      </Paper>
+                    )
+                 }}
+               </Contract>
+             );
+          })}
+        </List>
+      </React.Fragment>
     );
   }
 
@@ -136,21 +144,33 @@ class App extends React.Component<{}, IAppState> {
         <AppBar title="Emerald" subtitle="Starter Kit">
           <NetworkSelector />
           <CurrentBlockNumber />
-          <AccountSelector account={this.state.account} onChange={this.state.changeAccount}/>
           <EtcBalance account={this.state.account}/>
+          <AccountSelector account={this.state.account} onChange={this.state.changeAccount}/>
         </AppBar>
         <br />
-        <Page title="Emerald Starter Kit">
-          <div>
-            <Input multiline={true} id="textarea" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
-            <TransactionUri abi={this.state.contractAbi} {...this.state.transaction} value={'1000000000000000000'}>
-              {(transactionUri) => (<Button variant="contained" href={transactionUri}>Send Transaction</Button>)}
-            </TransactionUri>
-          </div>
-          <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodoIds" refresh={3000}>
-            {([{value}]) => this.renderTodos(value)}
-          </Contract>
-        </Page>
+        <div style={{maxWidth: '1100px', margin: '0 auto'}}>
+          <Page title="Todo List">
+            <Typography variant="title" color="inherit">Add a new Task</Typography>
+            <br />
+            <br />
+            <Grid container spacing={24} justify="center" direction="row" alignItems="center">
+              <Grid item xs>
+                <div style={{marginTop: '20px'}} />
+                <Input id="textarea" placeholder="Buy Milk" value={this.state.textarea} onChange={this.handleTextAreaChange.bind(this)}/>
+              </Grid>
+              <Grid item xs>
+                <TransactionUri abi={this.state.contractAbi} {...this.state.transaction} value={'1000000000000000000'}>
+                  {(transactionUri) => (<Button variant="contained" href={transactionUri}>Send Transaction</Button>)}
+                </TransactionUri>
+              </Grid>
+            </Grid>
+            <br />
+            <br />
+            <Contract address={this.state.contractAddress} abi={this.state.contractAbi} method="getTodoIds" refresh={3000}>
+              {([{value}]) => this.renderTodos(value)}
+            </Contract>
+          </Page>
+        </div>
       </EmeraldProvider>
     );
   }
