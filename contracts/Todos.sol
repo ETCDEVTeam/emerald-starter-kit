@@ -58,8 +58,6 @@ contract Todos {
             owner: msg.sender
         });
         todos.push(newTodo);
-
-        emit AfterAddTodo(newTodo.text);
     }
 
     function toggleTodoAtIndex(uint256 index)
@@ -85,16 +83,14 @@ contract Todos {
     modifier onlyBy(address _account)
     {
         require(
-            msg.sender == _account,
-            "Sender not authorized."
+            msg.sender == _account
         );
         _;
     }
 
     modifier costs(uint _amount) {
         require(
-            msg.value >= _amount,
-            "Not enough Ether provided."
+            msg.value >= _amount
         );
         _;
         if (msg.value > _amount)
@@ -105,8 +101,7 @@ contract Todos {
 
     modifier indexInBounds(uint256 index) {
         require(
-            index < todos.length,
-            "Index not in bounds."
+            index < todos.length
         );
         _;
     }
