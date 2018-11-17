@@ -20,7 +20,8 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "jest --verbose --coverage",
     "lint": "tslint -p tsconfig.json",
-    "clean": "./node_modules/.bin/rimraf ./build"
+    "clean": "./node_modules/.bin/rimraf ./build",
+    "postinstall": "patch-package"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -74,6 +75,7 @@
     "file-loader": "^1.1.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^21.2.1",
+    "patch-package": "^5.1.1",
     "postcss-loader": "^2.0.8",
     "rimraf": "^2.6.2",
     "source-map-loader": "^0.2.3",
