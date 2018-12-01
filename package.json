@@ -1,6 +1,6 @@
 {
   "name": "emerald-starter-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Emerald starter kit",
   "keywords": [
     "typescript",
@@ -8,11 +8,11 @@
     "dapp"
   ],
   "bugs": {
-    "url": "https://github.com/LibertyLocked/truffle-react-ts-template/issues"
+    "url": "https://github.com/ETCDevTeam/emerald-starter-kit/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/libertylocked/truffle-react-ts-template.git"
+    "url": "https://github.com/ETCDevTeam/emerald-starter-kit.git"
   },
   "scripts": {
     "start": "npm run-script dev",
